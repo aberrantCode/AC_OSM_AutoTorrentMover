@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run install.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/install.ps1",
+            "args": []
+        },
+        {
+            "name": "Run move-torrents.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/move-torrents.ps1",
+            "args": []
+        },    {
+            "name": "TEST Run move-torrents.ps1",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/move-torrents.ps1",
+            "args": [ 
+                "-Test"
+            ]
+        }
+    ]
+}

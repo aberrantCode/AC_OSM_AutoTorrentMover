@@ -1,0 +1,25 @@
+# Ignore the .vscode folder, except for launch.json
+.vscode/*
+!.vscode/launch.json
+
+# Ignore PowerShell script logs
+*.log
+
+# Ignore compiled output
+*.exe
+*.dll
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+
+# Ignore system files
+Thumbs.db
+.DS_Store
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
