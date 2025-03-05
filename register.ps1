@@ -1,5 +1,5 @@
 $taskName = "Move Torrent Files"
-$scriptPath = "C:\osm\torrents\src\move-torrents.ps1"  # Update this path to the actual location of your move-torrents.ps1 script
+$scriptPath = "C:\development\AC_OSM_AutoTorrentMover\start-monitor.ps1"  # Update this path to the actual location of your start-monitor.ps1 script
 
 Write-Host "Starting the register script..."
 Write-Host "Task name: $taskName"
