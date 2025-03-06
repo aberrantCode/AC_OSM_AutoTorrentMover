@@ -5,6 +5,7 @@
             "name": "Run install.ps1",
             "type": "PowerShell",
             "request": "launch",
+            "cwd": "${workspaceFolder}",
             "script": "${workspaceFolder}/install.ps1",
             "args": []
         },
