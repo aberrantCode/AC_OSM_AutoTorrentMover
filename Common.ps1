@@ -3,8 +3,6 @@
 if (-Not (Get-Module -ListAvailable -Name PwshSpectreConsole)) {
     Write-Host " * Required module not found. Installing module..."
     Install-Module -Name PwshSpectreConsole -Force -Scope CurrentUser
-} else {
-    Write-SpectreHost -Message " * Required module is already installed."
 }
 
 # Define global logging level variable

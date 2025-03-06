@@ -5,9 +5,9 @@ param (
     [switch]$Force
 )
 Clear-Host
-Write-SpectreFigletText -Text "Move Torrents"
-Write-SpectreRule -Title "Runtime environment and paramters"
-. ".\Common.ps1"
+. "$($PSScriptRoot)\Common.ps1"
+Write-SpectreFigletText -Text "Move Torrents" -Color "Olive"
+Write-SpectreRule -Title "Runtime environment and paramters" -Color "White"
 
 # Define lock file path
 $lockFilePath = Join-Path -Path $env:TEMP -ChildPath "move-torrents.lock"
@@ -18,15 +18,15 @@ if (Test-Path -Path $lockFilePath) {
     
     # If the lock file is older than 30 minutes, it might be stale (from a crashed run)
     if ($lockFileAge.TotalMinutes -lt 30 -and -not $Force) {
-        Write-SpectreHost -Message "!! [white]Another instance[/] of the script is already running. [yellow]Add -Force[/] parameter to override." 
+        Write-SpectreHost -Message " ! [white]Another instance[/] of the script is already running. [yellow]Add -Force[/] parameter to override." 
         exit 0
     }
     elseif ( $Force -or $lockFileAge.TotalMinutes -ge 30 ) {
-        Write-SpectreHost -Message" * Found a stale lock file (age: $([math]::Floor($lockFileAge.TotalMinutes)) minutes). Removing and continuing."
+        Write-SpectreHost -Message " * Removing stale lock file (age: $([math]::Floor($lockFileAge.TotalMinutes)) minutes)."
         Remove-Item -Path $lockFilePath -Force
     }
     else {
-        Write-SpectreHost -Message "Found a lock file [Red](age: $($lockFileAge.TotalMinutes) minutes)[/]. Exiting."
+        Write-SpectreHost -Message " * Detected lock file [Red](age: $($lockFileAge.TotalMinutes) minutes)[/]. Exiting."
         exit 1
     }
 }
@@ -64,33 +64,37 @@ try {
         param (
             [Spectre.Console.ProgressContext] $Context
         )
-        Write-SpectreHost -Message " * Initiating task with progress..."
-        $task1 = $Context.AddTask("Moving files")
+        $task1 = $Context.AddTask("[green]Moving files[/]")
+        $task1.Sp
+        $errorLogs = @()
         foreach ($file in $torrentFiles) {
+            $logEntries = @()
             try {
                 $currentItem++
-                #Write-Host "Processing item $($currentItem) of $($itemCount): $($file)"
+                $logEntries += "Processing item $($currentItem) of $($itemCount): $($file)"
                 $destinationPath = Join-Path -Path $Destination -ChildPath $file.Name
-                if ($Test -and $testFilePath -eq "") {
-                    #Write-ToLog "Test mode: Would move $($file.FullName) to $destinationPath"
-                }
-                else {
-                    #Write-ToLog " - Moving from $($file.FullName)"
-                    #Write-ToLog " - Moving to $destinationPath"
+                if ( -not $Test ) {
                     Move-Item -Path $file.FullName -Destination $destinationPath -Force | Out-Null
-                    #Write-ToLog " - Move completed"
+                    $logEntries += "Moved $($file.FullName) to $($destinationPath)"
                 }
                 if ( $Test -and $testFilePath -ne "") {
-                    #Write-ToLog " - Removing $($file.FullName)..."
                     Remove-Item -Path $destinationPath -Force | Out-Null
-                    #Write-ToLog " - Removed $($file.FullName)"
+                    $logEntries += "Removed test file $($file.FullName)"
                 }
+                Start-Sleep -Seconds 3
                 $moved++
             }
             catch {
-                Write-SpectreHost " * [DarkRed]Error[/] moving file $($file.FullName): [red]$_[/]"
+                $logEntries += "Error moving file $($file.FullName): $_"
+                $errorLogs += $logEntries
             }
             $task1.Increment($increment)
+        }
+        if ( $errorLogs.Count -gt 0 ) {
+            Write-SpectreHost -Message "Errors occurred during script execution:"
+            foreach ($error in $errorLogs) {
+                Write-SpectreHost -Message $error
+            }
         }
     }
     

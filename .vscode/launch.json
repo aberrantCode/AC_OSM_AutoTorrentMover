@@ -20,7 +20,7 @@
             "request": "launch",
             "script": "${workspaceFolder}/move-torrents.ps1",
             "args": [ 
-                "-Test"
+                "-Test", "-Force"
             ]
         }
     ]
